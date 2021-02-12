@@ -60,7 +60,7 @@ error_messages = {
 }
 
 
-def run_query(query, parameters, data_source, query_id, should_apply_auto_limit, max_age=0):
+def run_query(query, parameters, data_source, query_id, should_apply_auto_limit, max_age=30):
     if data_source.paused:
         if data_source.pause_reason:
             message = "{} is paused ({}). Please try later.".format(
@@ -83,10 +83,7 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
             "Missing parameter value for: {}".format(", ".join(query.missing_params))
         )
 
-    if max_age == 0:
-        query_result = None
-    else:
-        query_result = models.QueryResult.get_latest(data_source, query_text, max_age)
+    query_result = models.QueryResult.get_latest(data_source, query_text, max_age)
 
     record_event(
         current_user.org,
